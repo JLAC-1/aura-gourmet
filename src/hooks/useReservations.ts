@@ -1,10 +1,9 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { RestaurantTable, ReservationData } from '../types';
+import { RestaurantTable, ReservationData, TableStatus, SelectedDishItem, PaymentData } from '../types';
 import { INITIAL_TABLES, INITIAL_RESERVATIONS } from '../data/mockData';
 import { calculateTableStatusesForSlot, checkReservationConflict, generateReservationCode } from '../services/reservationService';
 
 export function useReservations() {
-  // Carga las reservas guardadas en localStorage o usa las iniciales
   const [reservations, setReservations] = useState<ReservationData[]>(() => {
     try {
       const saved = localStorage.getItem('aura_gourmet_reservations');
@@ -13,22 +12,23 @@ export function useReservations() {
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
     } catch (e) {
-      // Ignorar error de parseo
+      // Fallback to initial mock
     }
     return INITIAL_RESERVATIONS;
   });
 
-  // Guarda en localStorage permanentemente cada vez que se crea o cancela una reserva
+  // Keep localStorage in sync whenever reservations change
   useEffect(() => {
     try {
       localStorage.setItem('aura_gourmet_reservations', JSON.stringify(reservations));
     } catch (e) {
-      // Ignorar error
+      // ignore
     }
   }, [reservations]);
 
   const [baseTables] = useState<RestaurantTable[]>(INITIAL_TABLES);
   
+  // Current slot being viewed or booked
   const [selectedDate, setSelectedDate] = useState<string>(() => {
     return new Date().toISOString().split('T')[0];
   });
@@ -37,7 +37,10 @@ export function useReservations() {
   const [selectedGuests, setSelectedGuests] = useState<number>(2);
   const [selectedZone, setSelectedZone] = useState<string>('all');
   
+  // Selected table ID by user
   const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
+
+  // Success / alert notifications for UX feedback
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   const showNotification = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
@@ -48,10 +51,12 @@ export function useReservations() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Recalculate dynamic tables whenever selectedDate, selectedShift or reservations change
   const computedTables = useMemo(() => {
     return calculateTableStatusesForSlot(baseTables, reservations, selectedDate, selectedShift, selectedTime);
   }, [baseTables, reservations, selectedDate, selectedShift, selectedTime]);
 
+  // Effect to reset selected table if it becomes unavailable when changing date/shift
   useEffect(() => {
     if (selectedTableId) {
       const currentSelectedTable = computedTables.find((t) => t.id === selectedTableId);
@@ -65,16 +70,19 @@ export function useReservations() {
     }
   }, [selectedDate, selectedShift, computedTables, selectedTableId, showNotification]);
 
+  // Selected table object
   const selectedTable = useMemo(() => {
     return computedTables.find((t) => t.id === selectedTableId) || null;
   }, [computedTables, selectedTableId]);
 
+  // Statistics calculation for admin and overview
   const stats = useMemo(() => {
     const totalTables = computedTables.length;
     const disponibles = computedTables.filter((t) => t.status === 'disponible').length;
     const reservadas = computedTables.filter((t) => t.status === 'reservada').length;
     const ocupadas = computedTables.filter((t) => t.status === 'ocupada').length;
     const occupancyPercentage = Math.round(((totalTables - disponibles) / totalTables) * 100);
+
     const activeReservationsCount = reservations.filter((r) => r.status !== 'cancelada').length;
 
     return {
@@ -87,6 +95,7 @@ export function useReservations() {
     };
   }, [computedTables, reservations]);
 
+  // Create a new reservation
   const createReservation = useCallback((data: {
     customerName: string;
     email: string;
@@ -97,6 +106,8 @@ export function useReservations() {
     shift: 'almuerzo' | 'cena';
     guests: number;
     tableId: string;
+    selectedDishes?: SelectedDishItem[];
+    payment?: PaymentData;
   }): { success: boolean; reservation?: ReservationData; error?: string } => {
     const targetTable = computedTables.find((t) => t.id === data.tableId);
     if (!targetTable) {
@@ -110,6 +121,7 @@ export function useReservations() {
       };
     }
 
+    // Check conflict
     const { hasConflict, conflictingReservation } = checkReservationConflict(
       reservations,
       data.tableId,
@@ -144,6 +156,8 @@ export function useReservations() {
         dateStyle: 'short',
         timeStyle: 'short',
       }),
+      selectedDishes: data.selectedDishes || [],
+      payment: data.payment,
     };
 
     setReservations((prev) => [newReservation, ...prev]);
@@ -151,6 +165,7 @@ export function useReservations() {
     return { success: true, reservation: newReservation };
   }, [computedTables, reservations, showNotification]);
 
+  // Update status (e.g. from Admin panel: en_mesa, completada, cancelada)
   const updateReservationStatus = useCallback((
     reservationId: string,
     newStatus: 'confirmada' | 'en_mesa' | 'completada' | 'cancelada'
@@ -161,7 +176,7 @@ export function useReservations() {
     showNotification(`Estado de reserva actualizado a "${newStatus.replace('_', ' ')}".`, 'info');
   }, [showNotification]);
 
-  // Cancelar reserva y liberar la mesa inmediatamente
+  // Cancel reservation
   const cancelReservation = useCallback((reservationId: string) => {
     setReservations((prev) =>
       prev.map((r) => (r.id === reservationId ? { ...r, status: 'cancelada' } : r))
@@ -169,11 +184,12 @@ export function useReservations() {
     showNotification('La reserva ha sido cancelada y la mesa ha quedado liberada.', 'info');
   }, [showNotification]);
 
+  // Reset to default mock data
   const resetToInitialData = useCallback(() => {
     try {
       localStorage.removeItem('aura_gourmet_reservations');
     } catch (e) {
-      // Ignorar
+      // ignore
     }
     setReservations(INITIAL_RESERVATIONS);
     setSelectedTableId(null);

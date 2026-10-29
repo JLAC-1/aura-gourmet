@@ -18,11 +18,12 @@ export const Panelbarra: React.FC<PanelbarraProps> = ({ onToggleSidebar, onLogou
 
   return (
     <nav className="h-14 bg-stone-950 border-b border-stone-800 flex items-center justify-between px-4 sticky top-0 z-30">
+      
       {/* Brand & Sidebar Toggle */}
       <div className="flex items-center gap-4">
         <button
           onClick={onToggleSidebar}
-          className="p-1.5 rounded-lg text-stone-400 hover:text-stone-100 hover:bg-stone-900 transition-colors cursor-pointer"
+          className="p-1.5 rounded-lg text-stone-400 hover:text-stone-100 hover:bg-stone-900 transition-colors"
           title="Alternar Menú Lateral"
         >
           <Menu className="w-5 h-5" />
@@ -32,13 +33,13 @@ export const Panelbarra: React.FC<PanelbarraProps> = ({ onToggleSidebar, onLogou
           <div className="w-7 h-7 rounded bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
             <UtensilsCrossed className="w-4 h-4" />
           </div>
-          <span className="font-serif font-bold text-sm text-stone-100 tracking-wide">
+          <span className="font-serif-display font-bold text-sm text-stone-100 tracking-wide">
             Administración del Restaurante
           </span>
         </div>
       </div>
 
-      {/* Buscador */}
+      {/* Center Search Bar */}
       <div className="hidden sm:flex items-center max-w-xs w-full mx-4">
         <div className="relative w-full">
           <Search className="w-3.5 h-3.5 text-stone-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -52,11 +53,11 @@ export const Panelbarra: React.FC<PanelbarraProps> = ({ onToggleSidebar, onLogou
         </div>
       </div>
 
-      {/* Menú de Usuario */}
+      {/* User Dropdown */}
       <div className="relative">
         <button
           onClick={() => setShowDropdown(!showDropdown)}
-          className="flex items-center gap-2 p-1.5 rounded-lg text-stone-300 hover:bg-stone-900 transition-colors text-xs cursor-pointer"
+          className="flex items-center gap-2 p-1.5 rounded-lg text-stone-300 hover:bg-stone-900 transition-colors text-xs"
         >
           <div className="w-7 h-7 rounded-full bg-stone-800 border border-stone-700 flex items-center justify-center text-stone-300">
             <User className="w-4 h-4" />
@@ -71,14 +72,14 @@ export const Panelbarra: React.FC<PanelbarraProps> = ({ onToggleSidebar, onLogou
             </div>
             <button
               onClick={() => setShowDropdown(false)}
-              className="w-full text-left px-3 py-2 text-stone-300 hover:bg-stone-800 hover:text-white flex items-center gap-2 cursor-pointer"
+              className="w-full text-left px-3 py-2 text-stone-300 hover:bg-stone-800 hover:text-white flex items-center gap-2"
             >
               <Settings className="w-3.5 h-3.5" />
               <span>Configuración</span>
             </button>
             <button
               onClick={() => setShowDropdown(false)}
-              className="w-full text-left px-3 py-2 text-stone-300 hover:bg-stone-800 hover:text-white flex items-center gap-2 cursor-pointer"
+              className="w-full text-left px-3 py-2 text-stone-300 hover:bg-stone-800 hover:text-white flex items-center gap-2"
             >
               <Activity className="w-3.5 h-3.5" />
               <span>Registro de Actividad</span>
@@ -89,7 +90,7 @@ export const Panelbarra: React.FC<PanelbarraProps> = ({ onToggleSidebar, onLogou
                 setShowDropdown(false);
                 onLogout();
               }}
-              className="w-full text-left px-3 py-2 text-rose-400 hover:bg-rose-950/30 flex items-center gap-2 font-medium cursor-pointer"
+              className="w-full text-left px-3 py-2 text-rose-400 hover:bg-rose-950/30 flex items-center gap-2 font-medium"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Cerrar Sesión</span>
@@ -97,6 +98,7 @@ export const Panelbarra: React.FC<PanelbarraProps> = ({ onToggleSidebar, onLogou
           </div>
         )}
       </div>
+
     </nav>
   );
 };
