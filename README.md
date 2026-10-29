@@ -1,75 +1,53 @@
-# React + TypeScript + Vite
+# 🍽️ Aura Gourmet - Sistema de Reservas Gastronómicas
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Aura Gourmet** es una aplicación web interactiva diseñada para modernizar la gestión de reservas en restaurantes de alta gama. Reemplaza el registro manual por una plataforma digital centralizada que permite a los comensales seleccionar su mesa exacta en tiempo real mediante un plano interactivo.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 👥 Integrantes y Roles
 
-## React Compiler
+| Integrante | Rol | Responsabilidades |
+| :--- | :--- | :--- |
+| **Canaza Mamani, Brayan Jesús** | Diseñador UI/UX (Bocetos) | Diseño de wireframes de baja fidelidad  |
+| **Lizonde García, Diego Alberto** | Diseñador UI/UX (Prototipado) | Construcción del prototipo interactivo en Figma según requerimientos y guía de diseño. |
+| **Armas Castro, José Luis** | Desarrollo Frontend & Coordinación | Desarrollo integral de la aplicación en React 19 + Vite + Tailwind CSS, lógica de negocio (`useReservations.ts`), plano interactivo (`FloorPlan.tsx`), persistencia local y redacción de la documentación. |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🚀 Características Principales
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+* 🗺️ **Plano Interactivo de Mesas:** Visualización de 13 mesas distribuidas en 4 zonas funcionales (Ventanales Panorámicos, Salón Central, Terraza Jardín y Zona VIP & Cava).
+* ⏱️ **Disponibilidad en Tiempo Real:** Filtro automático por fecha, turno y cantidad de comensales.
+* 📱 **Validaciones Inteligentes:** Restricciones en formularios para formato de teléfono celular e impedimento de reservas duplicadas.
+* 💾 **Persistencia de Datos:** Gestión de estado global y sincronización continua con `localStorage`.
+* 📊 **Módulo de Reportes Gerenciales:** Análisis de tasa de ocupación, horas pico, ingresos estimados y cumplimiento.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🛠️ Stack Tecnológico
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+* **Frontend:** React 19
+* **Lenguaje:** TypeScript
+* **Herramienta de Construcción:** Vite
+* **Estilos:** Tailwind CSS (Paleta Dark Luxury)
+* **Iconos:** Lucide React
+* **Feedback Visual:** Canvas Confetti
 
-```
+---
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## 💻 Instalación y Ejecución Local
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Sigue estos pasos para clonar e iniciar el proyecto localmente:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# 1. Clonar el repositorio
+git clone [https://github.com/JLAC-1/aura-gourmet.git](https://github.com/JLAC-1/aura-gourmet.git)
 
-```
+# 2. Entrar a la carpeta del proyecto
+cd aura-gourmet
+
+# 3. Instalar las dependencias
+npm install
+
+# 4. Iniciar el servidor de desarrollo
+npm run dev
